@@ -16,9 +16,9 @@ Use this tool only on a Watch you own or have permission to manage. It uses the 
 
 ## Release asset
 
-The release ZIP contains a standalone `WatchRegion.app` for watchOS. It is unsigned and needs a valid development or distribution signature and provisioning profile for your Watch before installation. The Xcode build instructions above configure those for your own development team. If signing the prebuilt app directly, set its `CFBundleIdentifier` and `WatchRegionAppGroup` in `Info.plist` to match the identity and dedicated App Group in your provisioning profile before signing.
+The release IPA contains the standalone watchOS app at `Payload/WatchRegion.app`. It is unsigned and needs a valid development or distribution signature and provisioning profile for your Watch before installation. The Xcode build instructions above configure those for your own development team. If signing the prebuilt app directly, set its `CFBundleIdentifier` and `WatchRegionAppGroup` in `Info.plist` to match the identity and dedicated App Group in your provisioning profile before signing.
 
-To reproduce the ZIP with Xcode 27 or later, run `./Scripts/build-unsigned.sh` from the repository root. It writes the archive and its SHA-256 checksum to `dist/`.
+To build the IPA with Xcode 27 or later, run `./Scripts/build-unsigned.sh` from the repository root. It writes the IPA and its SHA-256 checksum to `dist/`.
 
 ## License
 

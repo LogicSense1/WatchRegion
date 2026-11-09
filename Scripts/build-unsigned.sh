@@ -21,10 +21,11 @@ if codesign --display "$app/WatchRegion" >/dev/null 2>&1 ||
 fi
 
 version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Info.plist")
-name="WatchRegion-$version-unsigned-watchOS.zip"
-mkdir -p "$root/dist"
+name="WatchRegion-$version-unsigned-watchOS.ipa"
+mkdir -p "$root/dist" "$work/Payload"
 cp "$root/LICENSE" "$app/LICENSE"
-ditto -c -k --norsrc --keepParent "$app" "$work/$name"
+mv "$app" "$work/Payload/"
+ditto -c -k --norsrc --keepParent "$work/Payload" "$work/$name"
 mv "$work/$name" "$root/dist/$name"
 (cd "$root/dist" && shasum -a 256 "$name" > "$name.sha256")
 printf '\n%s\n' "$root/dist/$name"
