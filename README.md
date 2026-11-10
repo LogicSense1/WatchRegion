@@ -1,6 +1,8 @@
 # Watch Region
 
-A standalone watchOS app that reads the MobileGestalt sales-region cache and applies `US / LL/A` to a supported `CH / CH/B` cache. The app saves and verifies the original bytes before writing, then verifies the in-place write. Restore Original requires a backup that matches the current cache. The app prompts you to wait 65 seconds before restarting and checks the cached values when you reopen it.
+A standalone watchOS app that reads and changes the MobileGestalt sales region on supported caches. Choose **Apply United States** for `US / LL/A` or enter a region code and sales suffix separately under **Custom Region**. The app checks the input format. Use the actual values for your intended market and device model.
+
+The app verifies the original backup before writing and reads the result back from the same file. You can apply another region or restore the saved region when the rest of the cache still matches the backup. Backups created by v0.2.0 are recognized. Wait for the 65-second countdown, restart the watch, then reopen the app to check the cached values.
 
 The earlier build was tested on an Apple Watch Ultra 4 running watchOS 27.3 beta (`24S5284h`). Support depends on the watchOS build and cache layout. The app changes two cached values. Siri AI availability also depends on Apple's eligibility checks, the paired iPhone, and Siri setup.
 

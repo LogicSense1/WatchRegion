@@ -19,6 +19,9 @@ private struct RegionView: View {
     @State private var error: String?
     @State private var confirmation: RegionEdit?
     @State private var running = false
+    @State private var showsCustomRegion = false
+    @State private var customRegionCode = ""
+    @State private var customSalesSuffix = ""
     private let restartDelay: TimeInterval = 65
 
     var body: some View {
@@ -39,12 +42,29 @@ private struct RegionView: View {
                 }
                 if running { ProgressView() }
 
-                Button("Apply United States") { confirmation = .apply }
+                Button("Apply United States") { confirmation = .apply(.unitedStates) }
                     .buttonStyle(.borderedProminent)
                     .tint(.cyan)
-                    .disabled(running || region?.label != "CH / CH/B")
+                    .disabled(running || region == nil || region?.salesRegion == .unitedStates)
+
+                Button {
+                    showsCustomRegion.toggle()
+                } label: {
+                    Label("Custom Region", systemImage: showsCustomRegion ? "chevron.down" : "chevron.right")
+                }
+
+                if showsCustomRegion {
+                    TextField("Region code", text: $customRegionCode)
+                    TextField("Sales suffix (e.g. J/A)", text: $customSalesSuffix)
+                    let target = SalesRegion.custom(regionCode: customRegionCode, salesSuffix: customSalesSuffix)
+                    Button("Review Change") {
+                        if let target { confirmation = .apply(target) }
+                    }
+                    .disabled(running || region == nil || target == nil || target == region?.salesRegion)
+                }
+
                 Button("Restore Original") { confirmation = .restore }
-                    .disabled(running || region?.label != "US / LL/A")
+                    .disabled(running || region?.originalRegion == nil || region?.originalRegion == region?.salesRegion)
 
                 Button("Refresh Region") { refreshRegion() }
                     .font(.footnote)
@@ -53,14 +73,18 @@ private struct RegionView: View {
             .padding(.horizontal, 4)
         }
         .navigationTitle("Watch Region")
-        .confirmationDialog(confirmation?.restoresOriginal == true ? "Restore original region?" : "Apply United States?",
+        .confirmationDialog(confirmation?.restoresOriginal == true ? "Restore original region?" : "Apply sales region?",
                             isPresented: Binding(get: { confirmation != nil }, set: { if !$0 { confirmation = nil } }),
                             titleVisibility: .visible, presenting: confirmation) { edit in
             Button(edit.restoresOriginal ? "Restore" : "Apply") { refreshRegion(edit) }
             Button("Cancel", role: .cancel) {}
         } message: { edit in
-            Text(edit.restoresOriginal ? "Restore the saved original cache, then restart your watch."
-                 : "Back up the original cache, apply US / LL/A, then restart your watch.")
+            switch edit {
+            case .apply(let target):
+                Text("Save the original cache, apply \(target.label), then restart your watch.")
+            case .restore:
+                Text("Restore the saved region \(region?.originalRegion?.label ?? ""), then restart your watch.")
+            }
         }
         .task { refreshRegion() }
     }
